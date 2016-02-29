@@ -1,0 +1,33 @@
+<div class="container">
+    <h1>Create a new user</h1>
+
+    <form novalidate="novalidate" class="form-horizontal" name="myForm">
+        <div class="control-group">
+            <label class="control-label" for="inputFirstName">First name:</label>
+
+            <div class="controls">
+                <input type="text" id="inputFirstName" name="inputFirstName" ng-model="contact.firstname" placeholder="First name"  required/><span style="color:#ff0000"> *</span>
+                <span style="color:red" ng-show="myForm.inputFirstName.$dirty && myForm.inputFirstName.$invalid">
+                    <span ng-show="myForm.inputFirstName.$error.required">First name is required.</span>
+                </span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="inputLastName">Last name:</label>
+
+            <div class="controls">
+                <input type="text" id="inputLastName"  name="inputLastName" ng-model="contact.lastname" placeholder="Last name" required/><span style="color:#ff0000"> *</span>
+                 <span style="color:red" ng-show="myForm.inputLastName.$dirty && myForm.inputLastName.$invalid">
+                    <span ng-show="myForm.inputLastName.$error.required">Last name is required.</span>
+                 </span>
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="controls">
+                <a ng-click="createNewUser()" class="btn btn-small btn-primary" ng-disabled="myForm.inputFirstName.$dirty && myForm.inputFirstName.invalid ||
+                   myForm.inputLastName.$dirty && myForm.inputLastName.$invalid">create new user</a>
+
+            </div>
+        </div>
+    </form>
+</div>

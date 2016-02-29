@@ -1,0 +1,26 @@
+<div class="span6">
+
+    <table class="table table-striped table-condensed">
+        <thead>
+        <!--- tr>
+            <th style="width:80px;" colspan="2" valign="right"><input type="search" ng-model="user.firstname"></th>
+        </tr --->
+        <tr>
+            <th style="min-width: 80px;">First name</th>
+            <th style="min-width: 80px;">Last name</th>
+            <th style="width:20px;">&nbsp;</th>
+            <th style="width:20px;">&nbsp;</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="user in contacts  | orderBy:'firstname' | filter:user.firstname">
+            <td>{{ user.firstname }}</td>
+            <td>{{ user.lastname }}</td>
+            <td><a ng-click="editUser(user)" class="btn btn-small btn-primary">edit</a></td>
+            <td><a ng-click="deleteUser(user._id)" class="btn btn-small btn-danger">delete</a></td>
+        </tr>
+        </tbody>
+    </table>
+    <a ui-sref="state2">create new user</a>
+
+</div>

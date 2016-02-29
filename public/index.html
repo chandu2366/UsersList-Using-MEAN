@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head lang="en" >
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="base.css">
+    <title>Title</title>
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+
+    <link rel="stylesheet" href="stylesheets/bootstrap-responsive.min.css"/>
+    <link rel="stylesheet" href="stylesheets/bootstrap.min.css"/>
+
+    <script>
+        var myApp = angular.module('myApp',['ui.router']);
+
+        myApp.config(function($stateProvider, $urlRouterProvider){
+            //
+            // For any unmatched url, redirect to /state1
+            $urlRouterProvider.otherwise("/state1");
+            //
+            // Now set up the states
+            $stateProvider
+                    .state('state1', {
+                        url : "/list",
+                        templateUrl : "user-list.html",
+                        controller : "ListController"
+                    })
+                    .state('state2', {
+                        url : "/create",
+                        templateUrl : "user-creation.html",
+                        controller : "UserCreationCtrl"
+                    })
+                    .state('state3', {
+                        url : "/edit?id",
+                        templateUrl : "user-detail.html",
+                        controller : "UserDetailCtrl",
+                        params: {                       // used for passing the user object to the controller.
+                            userObj: null
+                        }
+                    })
+
+        });
+
+        myApp.controller('ListController', function ($scope, $http, $filter, $state) {
+            //console.log('inside list');
+            $http.get('/contacts').then(function (test) {
+                $scope.contacts = test.data;
+            });
+
+            $scope.deleteUser = function(userid){
+                console.log(userid)//
+                // $scope.contact = [];
+                $http.delete('/contacts/' + userid).then(function(test){
+                    console.log('inside')
+                    console.log(test.data._id);
+                    // Find index of the user
+                    var index = $scope.contacts.indexOf(test.data._id);
+                    // Remove user from array
+                //    $scope.contacts.splice(index, 1);  this is not refreshing the ng-repeat.. so did not use
+                    $scope.contacts = $filter('filter')($scope.contacts , { _id: ('!' + test.data._id) });
+                   // console.log($scope.contacts);
+                });
+            };
+
+            // callback for ng-click 'editUser':
+            $scope.editUser = function (user) {
+                console.log(user);
+                $state.go('state3',{userObj:user});   // userobject is being passed as a stateparam for editing the user.
+            };
+        });
+
+        myApp.controller('UserCreationCtrl', function ($scope, $http, $state){
+            $scope.createNewUser = function () { // implicit function
+                // console.log($scope.contact);
+                if ($scope.contact === undefined){
+                   //console.log('user has not entered details')
+                }
+                else {
+                    $http.post('/contacts', $scope.contact).then(function (test) {  //  config or test..
+                        // console.log(test.data);
+                        // $scope.contacts.push(test.data);
+                    });
+                }
+                $state.go('state1');// redirects to listing
+            };
+        });
+
+
+        myApp.controller('UserDetailCtrl', function ($scope, $http, $stateParams, $state){
+
+            $scope.userDetail = $stateParams.userObj;
+
+            $scope.updateUser = function (userid) { // implicit function
+                //   console.log($scope.contact);
+                $http.put('/contacts', $scope.userDetail).then(function (test) {
+                    console.log(test.data);
+                    $state.go('state1');// redirects to listing
+                });
+            };
+            $scope.cancel=function(){
+                $state.go('state1');// redirects to listing
+            }
+        });
+
+    </script>
+</head>
+<body>
+<div ui-view><a ui-sref="state1">List of users</a></div>
+
+</body>
+</html>
